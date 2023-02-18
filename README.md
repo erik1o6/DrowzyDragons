@@ -1,7 +1,8 @@
 # DrowzyDragons
 ## Drowzy Dragons NFT Project
 
-`@@@@@@@  @@@@@@@   @@@@@@  @@@  @@@  @@@ @@@@@@@@ @@@ @@@      
+```
+@@@@@@@  @@@@@@@   @@@@@@  @@@  @@@  @@@ @@@@@@@@ @@@ @@@      
 @@!  @@@ @@!  @@@ @@!  @@@ @@!  @@!  @@!      @@! @@! !@@      
 @!@  !@! @!@!!@!  @!@  !@! @!!  !!@  @!@    @!!    !@!@!       
 !!:  !!! !!: :!!  !!:  !!!  !:  !!:  !!   !!:       !!:        
@@ -13,8 +14,8 @@
 @!@  !@! @!@!!@!  @!@!@!@! !@! @!@!@ @!@  !@! @!@@!!@!  !@@!!  
 !!:  !!! !!: :!!  !!:  !!! :!!   !!: !!:  !!! !!:  !!!     !:! 
 :: :  :   :   : :  :   : :  :: :: :   : :. :  ::    :  ::.: :  
-`
+```
 
 ### TODO
-Add 0xmisfits address
-Setup withdraw methods to account for percents for address
+1. Add 0xmisfits address
+2. Setup withdraw methods to account for percents for address
