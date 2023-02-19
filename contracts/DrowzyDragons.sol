@@ -1,4 +1,4 @@
-i//SPDX-License-Identifier: MIT
+//SPDX-License-Identifier: MIT
 pragma solidity ^0.8.11;
 
 /*
@@ -22,8 +22,9 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/security/Pausable.sol";
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "erc721a/contracts/ERC721A.sol";
+import "@openzeppelin/contracts/token/common/ERC2981.sol";
 
-contract DrowzyDragons is ERC721A, Ownable, Pausable {
+contract DrowzyDragons is ERC721A, Ownable, Pausable, ERC2981 {
     using SafeMath for uint256;
 
     event PermanentURI(string _value, uint256 indexed _id);
@@ -82,6 +83,7 @@ contract DrowzyDragons is ERC721A, Ownable, Pausable {
         _safeMint( t2, 1);
         _safeMint( t2, 1);
         lockMetadata(3);
+        _setDefaultRoyalty(t1, 500);
     }
 
 
@@ -213,6 +215,24 @@ contract DrowzyDragons is ERC721A, Ownable, Pausable {
     // Toggle Sale
     function togglePublicSaleStarted() external onlyOwner {
         publicSaleStarted = !publicSaleStarted;
+    }
+    
+
+    // Sets the contract-wide royalty info.
+    function setRoyaltyInfo(address receiver, uint96 feeBasisPoints)
+        external
+        onlyOwner
+    {
+        _setDefaultRoyalty(receiver, feeBasisPoints);
+    }
+
+    function supportsInterface(bytes4 interfaceId)
+        public
+        view
+        override(ERC721A, ERC2981)
+        returns (bool)
+    {
+        return super.supportsInterface(interfaceId);
     }
 
     function withdrawAll() public onlyOwner {
