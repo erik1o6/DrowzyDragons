@@ -1,5 +1,5 @@
-i//SPDX-License-Identifier: MIT
-pragma solidity ^0.8.11;
+//SPDX-License-Identifier: MIT
+pragma solidity 0.8.17;
 
 /*
                                                                
@@ -20,13 +20,11 @@ pragma solidity ^0.8.11;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/security/Pausable.sol";
-import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "erc721a/contracts/ERC721A.sol";
 
 contract DrowzyDragons is ERC721A, Ownable, Pausable {
-    using SafeMath for uint256;
 
-    event PermanentURI(string _value, uint256 indexed _id);
+    event PermanentURI(string _value, uint indexed _id);
 
     uint public constant MAX_SUPPLY = 10000;
     uint public constant MAX_PER_MINT = 10;
@@ -88,8 +86,7 @@ contract DrowzyDragons is ERC721A, Ownable, Pausable {
     // reserve MAX_RESERVE_SUPPLY for promotional purposes
     function reserveNFTs(address to, uint256 quantity) external onlyOwner {
         require(quantity > 0, "Must mint at least one Dragon");
-        uint totalMinted = totalSupply();
-        require(totalMinted.add(quantity) <= MAX_RESERVE_SUPPLY, "No more promo NFTs left");
+        require(totalSupply() + quantity <= MAX_RESERVE_SUPPLY, "No more promo NFTs left");
         _safeMint(to, quantity);
         lockMetadata(quantity);
     }
@@ -120,13 +117,11 @@ contract DrowzyDragons is ERC721A, Ownable, Pausable {
     // Mint Presale
     function mintPresale(uint256 quantity) external payable whenNotPaused whenPresaleStarted {
         require(quantity > 0, "Must mint at least one Dragon");
-        uint totalMinted = totalSupply();
+        require(_price * quantity == msg.value, "Insufficient funds sent");        
         require(_presaleEligible[msg.sender], "You are not eligible for the presale");
-        require(totalSupply() < MAX_SUPPLY, "All tokens have been minted");
         require(quantity <= PRESALE_MAX_MINT, "Cannot purchase this many tokens during presale");
-        require(totalMinted.add(quantity) < MAX_SUPPLY, "Not enough NFTs left to mint");
+        require(totalSupply() + quantity <= MAX_SUPPLY, "Not enough NFTs left to mint");
         require(_totalClaimed[msg.sender] + quantity <= PRESALE_MAX_MINT, "Purchase exceeds max allowed");
-        require(_price * quantity == msg.value, "Insufficient funds sent");
 
         _totalClaimed[msg.sender] += quantity;
         _safeMint(msg.sender, quantity);
@@ -137,10 +132,9 @@ contract DrowzyDragons is ERC721A, Ownable, Pausable {
 
     function mint(uint256 quantity) external payable whenNotPaused whenPublicSaleStarted {
         require(quantity > 0, "Quantity cannot be zero");
-        uint totalMinted = totalSupply();
         require(quantity <= MAX_PER_MINT, "Cannot mint that many at once");
         require(_totalClaimed[msg.sender] + quantity <= MAX_DRAGONS_MINTED, "You can adopt a maximum of 50 Dragons per address");
-        require(totalMinted.add(quantity) < MAX_SUPPLY, "Not enough NFTs left to mint");
+        require(totalSupply() + quantity <= MAX_SUPPLY, "Not enough NFTs left to mint");
         require(_price * quantity <= msg.value, "Insufficient funds sent");
         
 
@@ -220,5 +214,5 @@ contract DrowzyDragons is ERC721A, Ownable, Pausable {
         require(payable(t1).send(_each));
         require(payable(t2).send(_each));
     }
-
+    //hello world
 }
