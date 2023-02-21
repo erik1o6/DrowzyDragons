@@ -33,6 +33,8 @@ contract DrowzyDragons is ERC721A, Ownable, Pausable {
     
     address public constant t1 = 0x2aeb0d72BCDA72EA0d71c00E12a64d9467026556; //CODE2042
     address public constant t2 = 0x4265de963cdd60629d03FEE2cd3285e6d5ff6015; //KEWL
+    address public constant t3 = 0xC116bA1542dF6116E2750c1f41bB9e8811A91aF3; //Draco
+
 
     uint public constant MAX_RESERVE_SUPPLY = 100;
     string private _contractURI;
@@ -48,6 +50,7 @@ contract DrowzyDragons is ERC721A, Ownable, Pausable {
     bool public locked;
     bool public publicSaleStarted;
     bool public presaleStarted;
+    bool public preRevealTransfer;
 
     mapping(address => bool) private _presaleEligible;
     mapping(address => uint256) private _totalClaimed; 
@@ -58,6 +61,11 @@ contract DrowzyDragons is ERC721A, Ownable, Pausable {
 
     modifier whenPresaleStarted() {
         require(presaleStarted, "Presale has not started");
+        _;
+    }
+
+    modifier whenPreRevealTransfer() {
+        require(preRevealTransfer, "Can't transfer before Reveal");
         _;
     }
 
@@ -150,6 +158,14 @@ contract DrowzyDragons is ERC721A, Ownable, Pausable {
             emit PermanentURI(tokenURI(tid), tid);
         }
     }
+    
+    function transferFrom(
+        address from,
+        address to,
+        uint256 tokenId
+    ) public payable whenPreRevealTransfer override {
+    super.transferFrom(from, to, tokenId);
+    }
 
     // Owner functions for enabling presale, sale, revealing and setting the provenance hash
     function lockMetadataChange() external onlyOwner {
@@ -204,15 +220,20 @@ contract DrowzyDragons is ERC721A, Ownable, Pausable {
         presaleStarted = !presaleStarted;
     }
 
+   function togglePreRevealTransfer() external onlyOwner {
+        preRevealTransfer = !preRevealTransfer;
+    }
+
     // Toggle Sale
     function togglePublicSaleStarted() external onlyOwner {
         publicSaleStarted = !publicSaleStarted;
     }
 
     function withdrawAll() public onlyOwner {
-        uint256 _each = address(this).balance / 2;
+        uint256 _each = address(this).balance / 3;
         require(payable(t1).send(_each));
         require(payable(t2).send(_each));
+        require(payable(t3).send(_each));        
     }
     //hello world
 }
